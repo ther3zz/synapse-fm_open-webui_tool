@@ -63,8 +63,7 @@ BOOTLOADER_SCRIPT = """
         var sourceBuffer = null;
         var msQueue = [];
         var msAppending = false;
-        // Firefox detection
-        var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+
 
         // -- Message Listener --------------------------------------------
         window.addEventListener('message', function(evt) {
@@ -375,11 +374,11 @@ BOOTLOADER_SCRIPT = """
         }
 
         // -- Audio Streaming ---------------------------------------------
-        // Chrome: MediaSource + appendBuffer (low-latency, gapless)
-        // Firefox: fetch -> ReadableStream -> blob queue (native decoder)
+        // Primary: MediaSource + appendBuffer (low-latency, gapless)
+        // Fallback: fetch -> ReadableStream -> blob queue (native decoder)
+        // MediaSource.isTypeSupported() handles browser capability detection.
 
         var canMediaSource = (
-            !isFirefox &&
             typeof MediaSource !== 'undefined' &&
             MediaSource.isTypeSupported('audio/mpeg')
         );
@@ -454,9 +453,16 @@ BOOTLOADER_SCRIPT = """
                     if (sourceBuffer.updating) return;
                     if (sourceBuffer.buffered.length === 0) return;
                     var ct = audio.currentTime || 0;
+                    var end = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
+                    // Skip pruning if buffer ahead of playback is thin.
+                    // remove() blocks appendBuffer() while active, so
+                    // pruning a thin buffer causes underruns.
+                    if (end - ct < 10) return;
                     var start = sourceBuffer.buffered.start(0);
-                    var removeEnd = Math.max(start, ct - 5);
-                    if (removeEnd > start) {
+                    // Keep 30s behind currentTime (generous to avoid
+                    // pruning during brief playback stalls)
+                    var removeEnd = Math.max(start, ct - 30);
+                    if (removeEnd > start + 1) {
                         try { sourceBuffer.remove(start, removeEnd); } catch(e) {}
                     }
                 }
@@ -466,8 +472,8 @@ BOOTLOADER_SCRIPT = """
                     appendNext();
                 });
 
-                // Periodic buffer pruning (every 30s)
-                msPruneInterval = setInterval(pruneBuffer, 30000);
+                // Periodic buffer pruning (every 60s)
+                msPruneInterval = setInterval(pruneBuffer, 60000);
 
                 abortCtrl = new AbortController();
                 fetch(cfg.streamUrl, {
