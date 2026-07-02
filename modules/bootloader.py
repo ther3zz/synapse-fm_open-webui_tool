@@ -499,12 +499,17 @@ BOOTLOADER_SCRIPT = """
                     }
                     pump();
 
-                    audio.play().then(function() {
-                        isPlaying = true;
-                        setStatus('\\u25CF Live', true);
-                    }).catch(function() {
-                        setStatus('Click play to start');
-                    });
+                    // Defer play until first data arrives in the buffer
+                    var playOnce = function() {
+                        sourceBuffer.removeEventListener('updateend', playOnce);
+                        audio.play().then(function() {
+                            isPlaying = true;
+                            setStatus('\\u25CF Live', true);
+                        }).catch(function() {
+                            setStatus('Click play to start');
+                        });
+                    };
+                    sourceBuffer.addEventListener('updateend', playOnce);
                 }).catch(function(err) {
                     if (err.name !== 'AbortError') {
                         reconnect();
@@ -538,6 +543,7 @@ BOOTLOADER_SCRIPT = """
                 var reader = response.body.getReader();
                 var chunks = [];
                 var totalBytes = 0;
+                var firstSegment = true;
 
                 function pump() {
                     reader.read().then(function(result) {
@@ -550,11 +556,14 @@ BOOTLOADER_SCRIPT = """
                         chunks.push(result.value);
                         totalBytes += result.value.length;
 
-                        // Create segment every ~512KB (~32s of 128kbps audio)
-                        if (totalBytes >= 524288) {
+                        // First segment: 64KB (~4s) for fast startup
+                        // Subsequent: 512KB (~32s) for fewer handoffs
+                        var threshold = firstSegment ? 65536 : 524288;
+                        if (totalBytes >= threshold) {
                             enqueueBlobSegment(chunks);
                             chunks = [];
                             totalBytes = 0;
+                            firstSegment = false;
                         }
 
                         pump();
