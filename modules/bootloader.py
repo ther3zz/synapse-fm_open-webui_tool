@@ -421,6 +421,10 @@ BOOTLOADER_SCRIPT = """
             mediaSource.addEventListener('sourceopen', function() {
                 try {
                     sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+                    // Sequence mode: ignore internal MP3 timestamps and
+                    // play chunks in append order. Prevents timestamp
+                    // discontinuities from causing micro-gaps in live streams.
+                    try { sourceBuffer.mode = 'sequence'; } catch(e) {}
                 } catch(e) {
                     canMediaSource = false;
                     stopPlayback();
@@ -673,6 +677,20 @@ BOOTLOADER_SCRIPT = """
             audio.onerror = function() {
                 URL.revokeObjectURL(blobUrl);
                 playNextSegment();
+            };
+
+            // Start next segment slightly before this one ends to
+            // minimize the transition gap caused by Audio.play() latency.
+            var transitioned = false;
+            audio.ontimeupdate = function() {
+                if (transitioned) return;
+                if (audio.duration && isFinite(audio.duration)
+                    && audio.currentTime > audio.duration - 0.3
+                    && blobQueue.length > 0) {
+                    transitioned = true;
+                    audio.ontimeupdate = null;
+                    playNextSegment();
+                }
             };
 
             audio.play().then(function() {
