@@ -75,6 +75,27 @@ If you need to rotate your stream key (e.g., suspected compromise):
 | No audio in player | Check browser console. Try clicking the play button |
 | Player disappeared after update | It will auto-reinject on next `play_station` call |
 
+## Architecture
+
+Audio streaming uses a **fMP4 transmuxing** pipeline for gapless playback:
+
+```
+Web Worker (fetch) → 64KB MP3 chunks
+    → mse-audio-wrapper (MP3 → fMP4 transmux)
+    → MSE SourceBuffer (audio/mp4; codecs="mp3")
+    → <audio> element
+```
+
+Raw MP3 data is wrapped in ISO BMFF (fMP4) containers on the fly. fMP4 provides
+explicit sample-accurate timing metadata that lets the browser's MSE decoder
+handle gapless transitions natively, eliminating the micro-stutters that raw
+`audio/mpeg` in MSE produces.
+
+A **Blob queue fallback** is used for browsers without MSE support.
+
+See [`docs/architecture.md`](docs/architecture.md) for full technical details
+including security model, data flow, and API surface.
+
 ## Development
 
 ### Project Structure
@@ -89,7 +110,11 @@ synapse-fm_open-webui_tool/
 │   ├── sanitizer.py           # Output sanitization (LLM + HTML)
 │   ├── http_client.py         # HTTP client
 │   ├── player_builder.py      # HTML player template + postMessage bridge
-│   └── bootloader.py          # Persistent player injection + streaming engine
+│   ├── bootloader.py          # Persistent player injection + streaming engine
+│   └── vendor/
+│       └── mse-audio-wrapper.min.js  # MP3→fMP4 transmuxer (LGPL-3.0)
+├── docs/
+│   └── architecture.md        # Full technical architecture documentation
 └── README.md
 ```
 
@@ -109,6 +134,14 @@ python bundle.py --output my_tool.py
 
 The bundler includes pre-flight validation that checks for encoding corruption and syntax errors before producing output.
 
+## Third-Party Licenses
+
+This project includes the following third-party component:
+
+- **[mse-audio-wrapper](https://github.com/eshaz/mse-audio-wrapper)** v1.4.15 by Ethan Halsall — LGPL-3.0-or-later
+  - Wraps raw audio codecs into fMP4/WEBM containers for MSE playback
+  - Inlined in the bootloader as a minified IIFE bundle (~41KB)
+
 ## License
 
-MIT
+MIT (excluding third-party components listed above)

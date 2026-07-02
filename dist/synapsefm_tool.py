@@ -1142,7 +1142,8 @@ BOOTLOADER_ID = "synapsefm-player-bootloader"
 def _compute_bootloader_version():
     """Compute a short hash of the bootloader content for version tracking."""
     import hashlib
-    return hashlib.sha256(BOOTLOADER_SCRIPT.encode("utf-8")).hexdigest()[:12]
+    combined = _MSE_WRAPPER_JS + BOOTLOADER_SCRIPT
+    return hashlib.sha256(combined.encode("utf-8")).hexdigest()[:12]
 
 # Paths where Open WebUI's index.html might be found
 INDEX_PATHS = [
@@ -1159,8 +1160,17 @@ INDEX_PATHS = [
 # Note: BOOTLOADER_SCRIPT uses a data-version attribute set dynamically
 # by patch_frontend_index() / ensure_bootloader() using _compute_bootloader_version().
 # This allows detection of outdated bootloaders after tool upgrades.
+# mse-audio-wrapper v1.4.15 (LGPL-3.0-or-later) by Ethan Halsall
+# https://github.com/eshaz/mse-audio-wrapper
+# Wraps raw MP3 into fMP4 (ISO BMFF) for gapless MSE playback.
+# Bundled as IIFE; exposes MSEAudioWrapperModule.MSEAudioWrapper global.
+_MSE_WRAPPER_JS = """var MSEAudioWrapperModule=(()=>{var je=Object.defineProperty;var $n=Object.getOwnPropertyDescriptor;var Gn=Object.getOwnPropertyNames;var Wn=Object.prototype.hasOwnProperty;var qn=(s,t)=>{for(var e in t)je(s,e,{get:t[e],enumerable:!0})},Xn=(s,t,e,r)=>{if(t&&typeof t=="object"||typeof t=="function")for(let n of Gn(t))!Wn.call(s,n)&&n!==e&&je(s,n,{get:()=>t[n],enumerable:!(r=$n(t,n))||r.enumerable});return s};var jn=s=>Xn(je({},"__esModule",{value:!0}),s);var gr={};qn(gr,{MSEAudioWrapper:()=>Jt});var P=Symbol,un=", ",h=(()=>{let s="front",t="side",e="rear",r="left",n="center",o="right";return["",s+" ",t+" ",e+" "].map(a=>[[r,o],[r,o,n],[r,n,o],[n,r,o],[n]].flatMap(x=>x.map(y=>a+y).join(un)))})(),c0="LFE",b0="monophonic (mono)",g0="stereo",St="surround",D=(s,...t)=>`${[b0,g0,`linear ${St}`,"quadraphonic",`5.0 ${St}`,`5.1 ${St}`,`6.1 ${St}`,`7.1 ${St}`][s-1]} (${t.join(un)})`,wt=[b0,D(2,h[0][0]),D(3,h[0][2]),D(4,h[1][0],h[3][0]),D(5,h[1][2],h[3][0]),D(6,h[1][2],h[3][0],c0),D(7,h[1][2],h[2][0],h[3][4],c0),D(8,h[1][2],h[2][0],h[3][0],c0)],dn=192e3,fn=176400,Kt=96e3,Zt=88200,bn=64e3,_0=48e3,rt=44100,st=32e3,ot=24e3,it=22050,at=16e3,Qt=12e3,te=11025,ct=8e3,gn=7350,x0="absoluteGranulePosition",f="bandwidth",V="bitDepth",z="bitrate",ee=z+"Maximum",ne=z+"Minimum",re=z+"Nominal",h0="buffer",se=h0+"Fullness",k="codec",W=k+"Frames",oe="coupledStreamCount",Ft="crc",ie=Ft+"16",ae=Ft+"32",T="data",m="description",m0="duration",Mt="emphasis",ce="hasOpusPadding",n0="header",V0="isContinuedPacket",xe="isCopyrighted",z0="isFirstPage",le="isHome",r0="isLastPage",C0="isOriginal",y0="isPrivate",pe="isVbr",q="layer",i="length",d="mode",S0=d+"Extension",Je="mpeg",w0=Je+"Version",he="numberAACFrames",me="outputGain",xt="preSkip",ue="profile",de=P(),F0="protection",_n="rawData",s0="segments",b="subarray",$0="version",lt="vorbis",fe=lt+"Comments",be=lt+"Setup",ge="block",_e=ge+"ingStrategy",Ce=P(),M0=ge+"Size",G0=ge+"size0",W0=ge+"size1",Pt=P(),ye="channel",P0=ye+"MappingFamily",Se=ye+"MappingTable",$=ye+"Mode",kt=P(),p=ye+"s",Cn="copyright",we=Cn+"Id",Fe=Cn+"IdStart",k0="frame",T0=k0+"Count",X=k0+"Length",Me="Number",A0=k0+Me,u0=k0+"Padding",u=k0+"Size",yn="Rate",Pe="inputSample"+yn,Ye="page",pt=Ye+"Checksum",ht=P(),q0=Ye+"SegmentTable",R=Ye+"Sequence"+Me,Ke="sample",ke=Ke+Me,_=Ke+yn,l0=P(),C=Ke+"s",Te="stream",Ae=Te+"Count",De=Te+"Info",d0=Te+"Serial"+Me,Sn=Te+"StructureVersion",Ze="total",mt=Ze+"BytesOut",ut=Ze+"Duration",Tt=Ze+"Samples",S=P(),K=P(),At=P(),D0=P(),o0=P(),Ue=P(),Qe=P(),U0=P(),w=P(),Z=P(),Q=P(),p0=P(),B0=P(),Be=P(),i0=P(),a0=P(),t0=P(),Re=P(),H=Uint8Array,R0=DataView,F="reserved",N="bad",dt="free",Dt="none",Ee="16bit CRC";var tn=(s,t,e)=>{for(let r=0;r<s[i];r++){let n=t(r);for(let o=8;o>0;o--)n=e(n);s[r]=n}return s},Jn=tn(new H(256),s=>s,s=>s&128?7^s<<1:s<<1),U=[tn(new Uint16Array(256),s=>s<<8,s=>s<<1^(s&32768?32773:0))],B=[tn(new Uint32Array(256),s=>s,s=>s>>>1^(s&1)*3988292384)];for(let s=0;s<15;s++){U.push(new Uint16Array(256)),B.push(new Uint32Array(256));for(let t=0;t<=255;t++)U[s+1][t]=U[0][U[s][t]>>>8]^U[s][t]<<8,B[s+1][t]=B[s][t]>>>8^B[0][B[s][t]&255]}var Fn=s=>{let t=0,e=s[i];for(let r=0;r!==e;r++)t=Jn[t^s[r]];return t},Mn=s=>{let t=s[i],e=t-16,r=0,n=0;for(;n<=e;)r^=s[n++]<<8|s[n++],r=U[15][r>>8]^U[14][r&255]^U[13][s[n++]]^U[12][s[n++]]^U[11][s[n++]]^U[10][s[n++]]^U[9][s[n++]]^U[8][s[n++]]^U[7][s[n++]]^U[6][s[n++]]^U[5][s[n++]]^U[4][s[n++]]^U[3][s[n++]]^U[2][s[n++]]^U[1][s[n++]]^U[0][s[n++]];for(;n!==t;)r=(r&255)<<8^U[0][r>>8^s[n++]];return r},Pn=s=>{let t=s[i],e=t-16,r=0,n=0;for(;n<=e;)r=B[15][(s[n++]^r)&255]^B[14][(s[n++]^r>>>8)&255]^B[13][(s[n++]^r>>>16)&255]^B[12][s[n++]^r>>>24]^B[11][s[n++]]^B[10][s[n++]]^B[9][s[n++]]^B[8][s[n++]]^B[7][s[n++]]^B[6][s[n++]]^B[5][s[n++]]^B[4][s[n++]]^B[3][s[n++]]^B[2][s[n++]]^B[1][s[n++]]^B[0][s[n++]];for(;n!==t;)r=B[0][(r^s[n++])&255]^r>>>8;return r^-1},Bt=(...s)=>{let t=new H(s.reduce((e,r)=>e+r[i],0));return s.reduce((e,r)=>(t.set(r,e),e+r[i]),0),t},j=s=>String.fromCharCode(...s),wn=[0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15],Ut=s=>wn[s&15]<<4|wn[s>>4],Ie=class{constructor(t){this._data=t,this._pos=t[i]*8}set position(t){this._pos=t}get position(){return this._pos}read(t){let e=Math.floor(this._pos/8),r=this._pos%8;return this._pos-=t,(Ut(this._data[e-1])<<8)+Ut(this._data[e])>>7-r&255}},kn=(s,t)=>{try{return s.getBigInt64(t,!0)}catch{let e=s.getUint8(t+7)&128?-1:1,r=s.getUint32(t,!0),n=s.getUint32(t+4,!0);return e===-1&&(r=~r+1,n=~n+1),n>1048575&&console.warn("This platform does not support BigInt"),e*(r+n*2**32)}};var Rt=class{constructor(t,e){this._onCodecHeader=t,this._onCodecUpdate=e,this[i0]()}[a0](){this._isEnabled=!0}[i0](){this._headerCache=new Map,this._codecUpdateData=new WeakMap,this._codecHeaderSent=!1,this._codecShouldUpdate=!1,this._bitrate=null,this._isEnabled=!1}[Be](t,e){if(this._onCodecUpdate){this._bitrate!==t&&(this._bitrate=t,this._codecShouldUpdate=!0);let r=this._codecUpdateData.get(this._headerCache.get(this._currentHeader));this._codecShouldUpdate&&r&&this._onCodecUpdate({bitrate:t,...r},e),this._codecShouldUpdate=!1}}[w](t){let e=this._headerCache.get(t);return e&&this._updateCurrentHeader(t),e}[Z](t,e,r){this._isEnabled&&(this._codecHeaderSent||(this._onCodecHeader({...e}),this._codecHeaderSent=!0),this._updateCurrentHeader(t),this._headerCache.set(t,e),this._codecUpdateData.set(e,r))}_updateCurrentHeader(t){this._onCodecUpdate&&t!==this._currentHeader&&(this._codecShouldUpdate=!0,this._currentHeader=t)}};var E=new WeakMap,I=new WeakMap;var O=class{constructor(t,e){this._codecParser=t,this._headerCache=e}*[Qe](){let t;do{if(t=yield*this.Frame[Q](this._codecParser,this._headerCache,0),t)return t;this._codecParser[K](1)}while(!0)}*[U0](t){let e=yield*this[Qe](),r=I.get(e)[i];if(t||this._codecParser._flushing||(yield*this.Header[w](this._codecParser,this._headerCache,r)))return this._headerCache[a0](),this._codecParser[K](r),this._codecParser[D0](e),e;this._codecParser[o0](`Missing ${k0} at ${r} bytes from current position.`,`Dropping current ${k0} and trying again.`),this._headerCache[i0](),this._codecParser[K](1)}};var X0=class{constructor(t,e){I.set(this,{[n0]:t}),this[T]=e}};var J=class extends X0{static*[Q](t,e,r,n,o){let a=yield*t[w](r,n,o);if(a){let x=E.get(a)[X],y=E.get(a)[C],M=(yield*r[S](x,o))[b](0,x);return new e(a,M,y)}else return null}constructor(t,e,r){super(t,e),this[n0]=t,this[C]=r,this[m0]=r/t[_]*1e3,this[A0]=null,this[mt]=null,this[Tt]=null,this[ut]=null,I.get(this)[i]=e[i]}};var en="unsynchronizationFlag",nn="extendedHeaderFlag",rn="experimentalFlag",sn="footerPresent",Et=class s{static*getID3v2Header(t,e,r){let o={},a=yield*t[S](3,r);if(a[0]!==73||a[1]!==68||a[2]!==51||(a=yield*t[S](10,r),o[$0]=`id3v2.${a[3]}.${a[4]}`,a[5]&15)||(o[en]=!!(a[5]&128),o[nn]=!!(a[5]&64),o[rn]=!!(a[5]&32),o[sn]=!!(a[5]&16),a[6]&128||a[7]&128||a[8]&128||a[9]&128))return null;let x=a[6]<<21|a[7]<<14|a[8]<<7|a[9];return o[i]=10+x,new s(o)}constructor(t){this[$0]=t[$0],this[en]=t[en],this[nn]=t[nn],this[rn]=t[rn],this[sn]=t[sn],this[i]=t[i]}};var Y=class{constructor(t){E.set(this,t),this[V]=t[V],this[z]=null,this[p]=t[p],this[$]=t[$],this[_]=t[_]}};var Bn={0:[dt,dt,dt,dt,dt],16:[32,32,32,32,8],240:[N,N,N,N,N]},Le=(s,t,e)=>8*((s+e)%t+t)*(1<<(s+e)/t)-8*t*(t/8|0);for(let s=2;s<15;s++)Bn[s<<4]=[s*32,Le(s,4,0),Le(s,4,-1),Le(s,8,4),Le(s,8,0)];var Yn=0,Kn=1,Zn=2,Qn=3,Tn=4,ve="bands ",He=" to 31",An={0:ve+4+He,16:ve+8+He,32:ve+12+He,48:ve+16+He},j0="bitrateIndex",It="v2",$e="v1",Ne="Intensity stereo ",Oe=", MS stereo ",Ve="on",ze="off",tr={0:Ne+ze+Oe+ze,16:Ne+Ve+Oe+ze,32:Ne+ze+Oe+Ve,48:Ne+Ve+Oe+Ve},on={0:{[m]:F},2:{[m]:"Layer III",[u0]:1,[S0]:tr,[$e]:{[j0]:Zn,[C]:1152},[It]:{[j0]:Tn,[C]:576}},4:{[m]:"Layer II",[u0]:1,[S0]:An,[C]:1152,[$e]:{[j0]:Kn},[It]:{[j0]:Tn}},6:{[m]:"Layer I",[u0]:4,[S0]:An,[C]:384,[$e]:{[j0]:Yn},[It]:{[j0]:Qn}}},an="MPEG Version ",Dn="ISO/IEC ",er={0:{[m]:`${an}2.5 (later extension of MPEG 2)`,[q]:It,[_]:{0:te,4:Qt,8:ct,12:F}},8:{[m]:F},16:{[m]:`${an}2 (${Dn}13818-3)`,[q]:It,[_]:{0:it,4:ot,8:at,12:F}},24:{[m]:`${an}1 (${Dn}11172-3)`,[q]:$e,[_]:{0:rt,4:_0,8:st,12:F}},length:i},nr={0:Ee,1:Dt},rr={0:Dt,1:"50/15 ms",2:F,3:"CCIT J.17"},Un={0:{[p]:2,[m]:g0},64:{[p]:2,[m]:"joint "+g0},128:{[p]:2,[m]:"dual channel"},192:{[p]:1,[m]:b0}},J0=class s extends Y{static*[w](t,e,r){let n={},o=yield*Et.getID3v2Header(t,e,r);o&&(yield*t[S](o[i],r),t[K](o[i]));let a=yield*t[S](4,r),x=j(a[b](0,4)),y=e[w](x);if(y)return new s(y);if(a[0]!==255||a[1]<224)return null;let M=er[a[1]&24];if(M[m]===F)return null;let v=a[1]&6;if(on[v][m]===F)return null;let G={...on[v],...on[v][M[q]]};if(n[w0]=M[m],n[q]=G[m],n[C]=G[C],n[F0]=nr[a[1]&1],n[i]=4,n[z]=Bn[a[2]&240][G[j0]],n[z]===N||(n[_]=M[_][a[2]&12],n[_]===F)||(n[u0]=a[2]&2&&G[u0],n[y0]=!!(a[2]&1),n[X]=Math.floor(125*n[z]*n[C]/n[_]+n[u0]),!n[X]))return null;let et=a[3]&192;if(n[$]=Un[et][m],n[p]=Un[et][p],n[S0]=G[S0][a[3]&48],n[xe]=!!(a[3]&8),n[C0]=!!(a[3]&4),n[Mt]=rr[a[3]&3],n[Mt]===F)return null;n[V]=16;{let{length:Yt,frameLength:nt,samples:hn,...Xe}=n;e[Z](x,n,Xe)}return new s(n)}constructor(t){super(t),this[z]=t[z],this[Mt]=t[Mt],this[u0]=t[u0],this[xe]=t[xe],this[C0]=t[C0],this[y0]=t[y0],this[q]=t[q],this[S0]=t[S0],this[w0]=t[w0],this[F0]=t[F0]}};var Lt=class s extends J{static*[Q](t,e,r){return yield*super[Q](J0,s,t,e,r)}constructor(t,e,r){super(t,e,r)}};var vt=class extends O{constructor(t,e,r){super(t,e),this.Frame=Lt,this.Header=J0,r(this[k])}get[k](){return Je}*[p0](){return yield*this[U0]()}};var sr={0:"MPEG-4",8:"MPEG-2"},or={0:"valid",2:N,4:N,6:N},ir={0:Ee,1:Dt},ar={0:"AAC Main",64:"AAC LC (Low Complexity)",128:"AAC SSR (Scalable Sample Rate)",192:"AAC LTP (Long Term Prediction)"},cr={0:Kt,4:Zt,8:bn,12:_0,16:rt,20:st,24:ot,28:it,32:at,36:Qt,40:te,44:ct,48:gn,52:F,56:F,60:"frequency is written explicitly"},Rn={0:{[p]:0,[m]:"Defined in AOT Specific Config"},64:{[p]:1,[m]:b0},128:{[p]:2,[m]:D(2,h[0][0])},192:{[p]:3,[m]:D(3,h[1][3])},256:{[p]:4,[m]:D(4,h[1][3],h[3][4])},320:{[p]:5,[m]:D(5,h[1][3],h[3][0])},384:{[p]:6,[m]:D(6,h[1][3],h[3][0],c0)},448:{[p]:8,[m]:D(8,h[1][3],h[2][0],h[3][0],c0)}},Y0=class s extends Y{static*[w](t,e,r){let n={},o=yield*t[S](7,r),a=j([o[0],o[1],o[2],o[3]&252|o[6]&3]),x=e[w](a);if(x)Object.assign(n,x);else{if(o[0]!==255||o[1]<240||(n[w0]=sr[o[1]&8],n[q]=or[o[1]&6],n[q]===N))return null;let M=o[1]&1;n[F0]=ir[M],n[i]=M?7:9,n[de]=o[2]&192,n[l0]=o[2]&60;let v=o[2]&2;if(n[ue]=ar[n[de]],n[_]=cr[n[l0]],n[_]===F)return null;n[y0]=!!v,n[kt]=(o[2]<<8|o[3])&448,n[$]=Rn[n[kt]][m],n[p]=Rn[n[kt]][p],n[C0]=!!(o[3]&32),n[le]=!!(o[3]&8),n[we]=!!(o[3]&8),n[Fe]=!!(o[3]&4),n[V]=16,n[C]=1024,n[he]=o[6]&3;{let{length:G,channelModeBits:et,profileBits:Yt,sampleRateBits:nt,frameLength:hn,samples:Xe,numberAACFrames:mn,...zn}=n;e[Z](a,n,zn)}}if(n[X]=(o[3]<<11|o[4]<<3|o[5]>>5)&8191,!n[X])return null;let y=(o[5]<<6|o[6]>>2)&2047;return n[se]=y===2047?"VBR":y,new s(n)}constructor(t){super(t),this[we]=t[we],this[Fe]=t[Fe],this[se]=t[se],this[le]=t[le],this[C0]=t[C0],this[y0]=t[y0],this[q]=t[q],this[i]=t[i],this[w0]=t[w0],this[he]=t[he],this[ue]=t[ue],this[F0]=t[F0]}get audioSpecificConfig(){let t=E.get(this),e=t[de]+64<<5|t[l0]<<5|t[kt]>>3,r=new H(2);return new R0(r[h0]).setUint16(0,e,!1),r}};var Ht=class s extends J{static*[Q](t,e,r){return yield*super[Q](Y0,s,t,e,r)}constructor(t,e,r){super(t,e,r)}};var Nt=class extends O{constructor(t,e,r){super(t,e),this.Frame=Ht,this.Header=Y0,r(this[k])}get[k](){return"aac"}*[p0](){return yield*this[U0]()}};var E0=class s extends J{static _getFrameFooterCrc16(t){return(t[t[i]-2]<<8)+t[t[i]-1]}static[Re](t){let e=s._getFrameFooterCrc16(t),r=Mn(t[b](0,-2));return e===r}constructor(t,e,r){e[De]=r,e[ie]=s._getFrameFooterCrc16(t),super(e,t,E.get(e)[C])}};var En="get from STREAMINFO metadata block",xr={0:"Fixed",1:"Variable"},In={0:F,16:192};for(let s=2;s<16;s++)In[s<<4]=s<6?576*2**(s-2):2**s;var lr={0:En,1:Zt,2:fn,3:dn,4:ct,5:at,6:it,7:ot,8:st,9:rt,10:_0,11:Kt,15:N},pr={0:{[p]:1,[m]:b0},16:{[p]:2,[m]:D(2,h[0][0])},32:{[p]:3,[m]:D(3,h[0][1])},48:{[p]:4,[m]:D(4,h[1][0],h[3][0])},64:{[p]:5,[m]:D(5,h[1][1],h[3][0])},80:{[p]:6,[m]:D(6,h[1][1],c0,h[3][0])},96:{[p]:7,[m]:D(7,h[1][1],c0,h[3][4],h[2][0])},112:{[p]:8,[m]:D(8,h[1][1],c0,h[3][0],h[2][0])},128:{[p]:2,[m]:`${g0} (left, diff)`},144:{[p]:2,[m]:`${g0} (diff, right)`},160:{[p]:2,[m]:`${g0} (avg, diff)`},176:F,192:F,208:F,224:F,240:F},hr={0:En,2:8,4:12,6:F,8:16,10:20,12:24,14:F},I0=class s extends Y{static _decodeUTF8Int(t){if(t[0]>254)return null;if(t[0]<128)return{value:t[0],length:1};let e=1;for(let a=64;a&t[0];a>>=1)e++;let r=e-1,n=0,o=0;for(;r>0;o+=6,r--){if((t[r]&192)!==128)return null;n|=(t[r]&63)<<o}return n|=(t[r]&127>>e)<<o,{value:n,length:e}}static[t0](t,e){let r={[S]:function*(){return t}};return s[w](r,e,0).next().value}static*[w](t,e,r){let n=yield*t[S](6,r);if(n[0]!==255||!(n[1]===248||n[1]===249))return null;let o={},a=j(n[b](0,4)),x=e[w](a);if(x)Object.assign(o,x);else{if(o[Ce]=n[1]&1,o[_e]=xr[o[Ce]],o[Pt]=n[2]&240,o[l0]=n[2]&15,o[M0]=In[o[Pt]],o[M0]===F||(o[_]=lr[o[l0]],o[_]===N)||n[3]&1)return null;let M=pr[n[3]&240];if(M===F||(o[p]=M[p],o[$]=M[m],o[V]=hr[n[3]&14],o[V]===F))return null}o[i]=5,n=yield*t[S](o[i]+8,r);let y=s._decodeUTF8Int(n[b](4));if(!y||(o[Ce]?o[ke]=y.value:o[A0]=y.value,o[i]+=y[i],o[Pt]===96?(n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[M0]=n[o[i]-1]+1,o[i]+=1):o[Pt]===112&&(n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[M0]=(n[o[i]-1]<<8)+n[o[i]]+1,o[i]+=2),o[C]=o[M0],o[l0]===12?(n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[_]=n[o[i]-1]*1e3,o[i]+=1):o[l0]===13?(n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[_]=(n[o[i]-1]<<8)+n[o[i]],o[i]+=2):o[l0]===14&&(n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[_]=((n[o[i]-1]<<8)+n[o[i]])*10,o[i]+=2),n[i]<o[i]&&(n=yield*t[S](o[i],r)),o[Ft]=n[o[i]-1],o[Ft]!==Fn(n[b](0,o[i]-1))))return null;if(!x){let{blockingStrategyBits:M,frameNumber:v,sampleNumber:G,samples:et,sampleRateBits:Yt,blockSizeBits:nt,crc:hn,length:Xe,...mn}=o;e[Z](a,o,mn)}return new s(o)}constructor(t){super(t),this[ie]=null,this[_e]=t[_e],this[M0]=t[M0],this[A0]=t[A0],this[ke]=t[ke],this[De]=null}};var mr=2,ur=512*1024,K0=class extends O{constructor(t,e,r){super(t,e),this.Frame=E0,this.Header=I0,r(this[k])}get[k](){return"flac"}*_getNextFrameSyncOffset(t){let e=yield*this._codecParser[S](2,0),r=e[i]-2;for(;t<r;){if(e[t]===255){let o=e[t+1];if(o===248||o===249)break;o!==255&&t++}t++}return t}*[p0](){do{let t=yield*I0[w](this._codecParser,this._headerCache,0);if(t){let e=E.get(t)[i]+mr;for(;e<=ur;){if(this._codecParser._flushing||(yield*I0[w](this._codecParser,this._headerCache,e))){let r=yield*this._codecParser[S](e);if(this._codecParser._flushing||(r=r[b](0,e)),E0[Re](r)){let n=new E0(r,t);return this._headerCache[a0](),this._codecParser[K](e),this._codecParser[D0](n),n}}e=yield*this._getNextFrameSyncOffset(e+1)}this._codecParser[o0](`Unable to sync FLAC frame after searching ${e} bytes.`),this._codecParser[K](e)}else this._codecParser[K](yield*this._getNextFrameSyncOffset(1))}while(!0)}[B0](t){return t[R]===0?(this._headerCache[a0](),this._streamInfo=t[T][b](13)):t[R]===1||(t[W]=I.get(t)[s0].map(e=>{let r=I0[t0](e,this._headerCache);if(r)return new E0(e,r,this._streamInfo);this._codecParser[o0]("Failed to parse Ogg FLAC frame","Skipping invalid FLAC frame")}).filter(e=>!!e)),t}};var Z0=class s{static*[w](t,e,r){let n={},o=yield*t[S](28,r);if(o[0]!==79||o[1]!==103||o[2]!==103||o[3]!==83||(n[Sn]=o[4],o[5]&248))return null;n[r0]=!!(o[5]&4),n[z0]=!!(o[5]&2),n[V0]=!!(o[5]&1);let x=new R0(H.from(o[b](0,28))[h0]);n[x0]=kn(x,6),n[d0]=x.getInt32(14,!0),n[R]=x.getInt32(18,!0),n[pt]=x.getInt32(22,!0);let y=o[26];n[i]=y+27,o=yield*t[S](n[i],r),n[X]=0,n[q0]=[],n[ht]=H.from(o[b](27,n[i]));for(let M=0,v=0;M<y;M++){let G=n[ht][M];n[X]+=G,v+=G,(G!==255||M===y-1)&&(n[q0].push(v),v=0)}return new s(n)}constructor(t){E.set(this,t),this[x0]=t[x0],this[V0]=t[V0],this[z0]=t[z0],this[r0]=t[r0],this[q0]=t[q0],this[R]=t[R],this[pt]=t[pt],this[d0]=t[d0]}};var Ot=class s extends X0{static*[Q](t,e,r){let n=yield*Z0[w](t,e,r);if(n){let o=E.get(n)[X],a=E.get(n)[i],x=a+o,y=(yield*t[S](x,0))[b](0,x),M=y[b](a,x);return new s(n,M,y)}else return null}constructor(t,e,r){super(t,e),I.get(this)[i]=r[i],this[W]=[],this[_n]=r,this[x0]=t[x0],this[ae]=t[pt],this[m0]=0,this[V0]=t[V0],this[z0]=t[z0],this[r0]=t[r0],this[R]=t[R],this[C]=0,this[d0]=t[d0]}};var ft=class extends J{constructor(t,e,r){super(e,t,r)}};var Ln={0:wt.slice(0,2),1:wt},e0="SILK-only",L="CELT-only",Ge="Hybrid",L0="narrowband",We="medium-band",v0="wideband",bt="super-wideband",gt="fullband",dr={0:{[d]:e0,[f]:L0,[u]:10},8:{[d]:e0,[f]:L0,[u]:20},16:{[d]:e0,[f]:L0,[u]:40},24:{[d]:e0,[f]:L0,[u]:60},32:{[d]:e0,[f]:We,[u]:10},40:{[d]:e0,[f]:We,[u]:20},48:{[d]:e0,[f]:We,[u]:40},56:{[d]:e0,[f]:We,[u]:60},64:{[d]:e0,[f]:v0,[u]:10},72:{[d]:e0,[f]:v0,[u]:20},80:{[d]:e0,[f]:v0,[u]:40},88:{[d]:e0,[f]:v0,[u]:60},96:{[d]:Ge,[f]:bt,[u]:10},104:{[d]:Ge,[f]:bt,[u]:20},112:{[d]:Ge,[f]:gt,[u]:10},120:{[d]:Ge,[f]:gt,[u]:20},128:{[d]:L,[f]:L0,[u]:2.5},136:{[d]:L,[f]:L0,[u]:5},144:{[d]:L,[f]:L0,[u]:10},152:{[d]:L,[f]:L0,[u]:20},160:{[d]:L,[f]:v0,[u]:2.5},168:{[d]:L,[f]:v0,[u]:5},176:{[d]:L,[f]:v0,[u]:10},184:{[d]:L,[f]:v0,[u]:20},192:{[d]:L,[f]:bt,[u]:2.5},200:{[d]:L,[f]:bt,[u]:5},208:{[d]:L,[f]:bt,[u]:10},216:{[d]:L,[f]:bt,[u]:20},224:{[d]:L,[f]:gt,[u]:2.5},232:{[d]:L,[f]:gt,[u]:5},240:{[d]:L,[f]:gt,[u]:10},248:{[d]:L,[f]:gt,[u]:20}},_t=class s extends Y{static[t0](t,e,r){let n={};if(n[p]=t[9],n[P0]=t[18],n[i]=n[P0]!==0?21+n[p]:19,t[i]<n[i])throw new Error("Out of data while inside an Ogg Page");let o=e[0]&3,a=o===3?2:1,x=j(t[b](0,n[i]))+j(e[b](0,a)),y=r[w](x);if(y)return new s(y);if(x.substr(0,8)!=="OpusHead"||t[8]!==1)return null;n[T]=H.from(t[b](0,n[i]));let M=new R0(n[T][h0]);if(n[V]=16,n[xt]=M.getUint16(10,!0),n[Pe]=M.getUint32(12,!0),n[_]=_0,n[me]=M.getInt16(16,!0),n[P0]in Ln&&(n[$]=Ln[n[P0]][n[p]-1],!n[$]))return null;n[P0]!==0&&(n[Ae]=t[19],n[oe]=t[20],n[Se]=[...t[b](21,n[p]+21)]);let v=dr[248&e[0]];switch(n[d]=v[d],n[f]=v[f],n[u]=v[u],o){case 0:n[T0]=1;break;case 1:case 2:n[T0]=2;break;case 3:n[pe]=!!(128&e[1]),n[ce]=!!(64&e[1]),n[T0]=63&e[1];break;default:return null}{let{length:G,data:et,channelMappingFamily:Yt,...nt}=n;r[Z](x,n,nt)}return new s(n)}constructor(t){super(t),this[T]=t[T],this[f]=t[f],this[P0]=t[P0],this[Se]=t[Se],this[oe]=t[oe],this[T0]=t[T0],this[u]=t[u],this[ce]=t[ce],this[Pe]=t[Pe],this[pe]=t[pe],this[d]=t[d],this[me]=t[me],this[xt]=t[xt],this[Ae]=t[Ae]}};var Vt=class extends O{constructor(t,e,r){super(t,e),this.Frame=ft,this.Header=_t,r(this[k]),this._identificationHeader=null,this._preSkipRemaining=null}get[k](){return"opus"}[B0](t){return t[R]===0?(this._headerCache[a0](),this._identificationHeader=t[T]):t[R]===1||(t[W]=I.get(t)[s0].map(e=>{let r=_t[t0](this._identificationHeader,e,this._headerCache);if(r){this._preSkipRemaining===null&&(this._preSkipRemaining=r[xt]);let n=r[u]*r[T0]/1e3*r[_];return this._preSkipRemaining>0&&(this._preSkipRemaining-=n,n=this._preSkipRemaining<0?-this._preSkipRemaining:0),new ft(e,r,n)}this._codecParser[Ue]("Failed to parse Ogg Opus Header","Not a valid Ogg Opus file")})),t}};var Ct=class extends J{constructor(t,e,r){super(e,t,r)}};var cn={};for(let s=0;s<8;s++)cn[s+6]=2**(6+s);var zt=class s extends Y{static[t0](t,e,r,n){if(t[i]<30)throw new Error("Out of data while inside an Ogg Page");let o=j(t[b](0,30)),a=e[w](o);if(a)return new s(a);let x={[i]:30};if(o.substr(0,7)!=="vorbis")return null;x[T]=H.from(t[b](0,30));let y=new R0(x[T][h0]);if(x[$0]=y.getUint32(7,!0),x[$0]!==0||(x[p]=t[11],x[$]=wt[x[p]-1]||"application defined",x[_]=y.getUint32(12,!0),x[ee]=y.getInt32(16,!0),x[re]=y.getInt32(20,!0),x[ne]=y.getInt32(24,!0),x[W0]=cn[(t[28]&240)>>4],x[G0]=cn[t[28]&15],x[G0]>x[W0])||t[29]!==1)return null;x[V]=32,x[be]=n,x[fe]=r;{let{length:M,data:v,version:G,vorbisSetup:et,vorbisComments:Yt,...nt}=x;e[Z](o,x,nt)}return new s(x)}constructor(t){super(t),this[ee]=t[ee],this[ne]=t[ne],this[re]=t[re],this[G0]=t[G0],this[W0]=t[W0],this[T]=t[T],this[fe]=t[fe],this[be]=t[be]}};var $t=class extends O{constructor(t,e,r){super(t,e),this.Frame=Ct,r(this[k]),this._identificationHeader=null,this._setupComplete=!1,this._prevBlockSize=null}get[k](){return lt}[B0](t){t[W]=[];for(let e of I.get(t)[s0])if(e[0]===1)this._headerCache[a0](),this._identificationHeader=t[T],this._setupComplete=!1;else if(e[0]===3)this._vorbisComments=e;else if(e[0]===5)this._vorbisSetup=e,this._mode=this._parseSetupHeader(e),this._setupComplete=!0;else if(this._setupComplete){let r=zt[t0](this._identificationHeader,this._headerCache,this._vorbisComments,this._vorbisSetup);r?t[W].push(new Ct(e,r,this._getSamples(e,r))):this._codecParser[logError]("Failed to parse Ogg Vorbis Header","Not a valid Ogg Vorbis file")}return t}_getSamples(t,e){let n=this._mode.blockFlags[t[0]>>1&this._mode.mask]?e[W0]:e[G0],o=this._prevBlockSize===null?0:(this._prevBlockSize+n)/4;return this._prevBlockSize=n,o}_parseSetupHeader(t){let e=new Ie(t),r={count:0,blockFlags:[]};for(;(e.read(1)&1)!==1;);let n;for(;r.count<64&&e.position>0;){Ut(e.read(8));let o=0;for(;e.read(8)===0&&o++<3;);if(o===4)n=e.read(7),r.blockFlags.unshift(n&1),e.position+=6,r.count++;else{((Ut(n)&126)>>1)+1!==r.count&&this._codecParser[o0]("vorbis derived mode count did not match actual mode count");break}}return r.mask=(1<<Math.log2(r.count))-1,r}};var xn=class{constructor(t,e,r){this._codecParser=t,this._headerCache=e,this._onCodec=r,this._continuedPacket=new H,this._codec=null,this._isSupported=null,this._previousAbsoluteGranulePosition=null}get[k](){return this._codec||""}_updateCodec(t,e){this._codec!==t&&(this._headerCache[i0](),this._parser=new e(this._codecParser,this._headerCache,this._onCodec),this._codec=t)}_checkCodecSupport({data:t}){let e=j(t[b](0,8));switch(e){case"fishead\0":return!1;case"OpusHead":return this._updateCodec("opus",Vt),!0;case(/^\x7fFLAC/.test(e)&&e):return this._updateCodec("flac",K0),!0;case(/^\x01vorbis/.test(e)&&e):return this._updateCodec(lt,$t),!0;default:return!1}}_checkPageSequenceNumber(t){t[R]!==this._pageSequenceNumber+1&&this._pageSequenceNumber>1&&t[R]>1&&this._codecParser[o0]("Unexpected gap in Ogg Page Sequence Number.",`Expected: ${this._pageSequenceNumber+1}, Got: ${t[R]}`),this._pageSequenceNumber=t[R]}_parsePage(t){this._isSupported===null&&(this._pageSequenceNumber=t[R],this._isSupported=this._checkCodecSupport(t)),this._checkPageSequenceNumber(t);let e=I.get(t),r=E.get(e[n0]),n=0;if(e[s0]=r[q0].map(o=>t[T][b](n,n+=o)),this._continuedPacket[i]&&(e[s0][0]=Bt(this._continuedPacket,e[s0][0]),this._continuedPacket=new H),r[ht][r[ht][i]-1]===255&&(this._continuedPacket=Bt(this._continuedPacket,e[s0].pop())),this._previousAbsoluteGranulePosition!==null&&(t[C]=Number(t[x0]-this._previousAbsoluteGranulePosition)),this._previousAbsoluteGranulePosition=t[x0],this._isSupported){let o=this._parser[B0](t);return this._codecParser[D0](o),o}else return t}},Gt=class extends O{constructor(t,e,r){super(t,e),this._onCodec=r,this.Frame=Ot,this.Header=Z0,this._streams=new Map,this._currentSerialNumber=null}get[k](){let t=this._streams.get(this._currentSerialNumber);return t?t.codec:""}*[p0](){let t=yield*this[U0](!0);this._currentSerialNumber=t[d0];let e=this._streams.get(this._currentSerialNumber);return e||(e=new xn(this._codecParser,this._headerCache,this._onCodec),this._streams.set(this._currentSerialNumber,e)),t[r0]&&this._streams.delete(this._currentSerialNumber),e._parsePage(t)}};var ln=()=>{},Wt=class{constructor(t,{onCodec:e,onCodecHeader:r,onCodecUpdate:n,enableLogging:o=!1,enableFrameCRC32:a=!0}={}){this._inputMimeType=t,this._onCodec=e||ln,this._onCodecHeader=r||ln,this._onCodecUpdate=n,this._enableLogging=o,this._crc32=a?Pn:ln,this[i0]()}get[k](){return this._parser?this._parser[k]:""}[i0](){this._headerCache=new Rt(this._onCodecHeader,this._onCodecUpdate),this._generator=this._getGenerator(),this._generator.next()}*flush(){this._flushing=!0;for(let t=this._generator.next();t.value;t=this._generator.next())yield t.value;this._flushing=!1,this[i0]()}*parseChunk(t){for(let e=this._generator.next(t);e.value;e=this._generator.next())yield e.value}parseAll(t){return[...this.parseChunk(t),...this.flush()]}*_getGenerator(){if(this._inputMimeType.match(/aac/))this._parser=new Nt(this,this._headerCache,this._onCodec);else if(this._inputMimeType.match(/mpeg/))this._parser=new vt(this,this._headerCache,this._onCodec);else if(this._inputMimeType.match(/flac/))this._parser=new K0(this,this._headerCache,this._onCodec);else if(this._inputMimeType.match(/ogg/))this._parser=new Gt(this,this._headerCache,this._onCodec);else throw new Error(`Unsupported Codec ${mimeType}`);for(this._frameNumber=0,this._currentReadPosition=0,this._totalBytesIn=0,this._totalBytesOut=0,this._totalSamples=0,this._sampleRate=void 0,this._rawData=new Uint8Array(0);;){let t=yield*this._parser[p0]();t&&(yield t)}}*[S](t=0,e=0){let r;for(;this._rawData[i]<=t+e;){if(r=yield,this._flushing)return this._rawData[b](e);r&&(this._totalBytesIn+=r[i],this._rawData=Bt(this._rawData,r))}return this._rawData[b](e)}[K](t){this._currentReadPosition+=t,this._rawData=this._rawData[b](t)}[At](t){this._sampleRate=t[n0][_],t[n0][z]=t[m0]>0?Math.round(t[T][i]/t[m0])*8:0,t[A0]=this._frameNumber++,t[mt]=this._totalBytesOut,t[Tt]=this._totalSamples,t[ut]=this._totalSamples/this._sampleRate*1e3,t[ae]=this._crc32(t[T]),this._headerCache[Be](t[n0][z],t[ut]),this._totalBytesOut+=t[T][i],this._totalSamples+=t[C]}[D0](t){if(t[W]){if(t[r0]){let e=t[C];t[W].forEach(r=>{let n=r[C];e<n&&(r[C]=e>0?e:0,r[m0]=r[C]/r[n0][_]*1e3),e-=n,this[At](r)})}else t[C]=0,t[W].forEach(e=>{t[C]+=e[C],this[At](e)});t[m0]=t[C]/this._sampleRate*1e3||0,t[Tt]=this._totalSamples,t[ut]=this._totalSamples/this._sampleRate*1e3||0,t[mt]=this._totalBytesOut}else this[At](t)}_log(t,e){if(this._enableLogging){let r=[`${k}:         ${this[k]}`,`inputMimeType: ${this._inputMimeType}`,`readPosition:  ${this._currentReadPosition}`,`totalBytesIn:  ${this._totalBytesIn}`,`${mt}: ${this._totalBytesOut}`],n=Math.max(...r.map(o=>o[i]));e.push(`--stats--${"-".repeat(n-9)}`,...r,"-".repeat(n)),t("codec-parser",e.reduce((o,a)=>o+`
+  `+a,""))}}[o0](...t){this._log(console.warn,t)}[Ue](...t){this._log(console.error,t)}};var vn=Wt;var H0="webm";var Q0="mp4a.40.2",qt="flac",Xt="vorbis",f0="opus",Hn="audio/",Nn=";codecs=",jt=Hn+"mp4"+Nn,pn=Hn+H0+Nn,tt="mse-audio-wrapper";var A=class s{constructor({name:t,contents:e=[],children:r=[]}){this._name=t,this._contents=e,this._children=r}static stringToByteArray(t){return[...t].map(e=>e.charCodeAt(0))}static getFloat64(t){let e=new Uint8Array(8);return new DataView(e.buffer).setFloat64(0,t),e}static getUint64(t){let e=new Uint8Array(8);return new DataView(e.buffer).setBigUint64(0,BigInt(t)),e}static getUint32(t){let e=new Uint8Array(4);return new DataView(e.buffer).setUint32(0,t),e}static getUint16(t){let e=new Uint8Array(2);return new DataView(e.buffer).setUint16(0,t),e}static getInt16(t){let e=new Uint8Array(2);return new DataView(e.buffer).setInt16(0,t),e}static*flatten(t){for(let e of t)Array.isArray(e)?yield*s.flatten(e):yield e}get contents(){let t=new Uint8Array(this.length),e=this._buildContents(),r=0;for(let n of s.flatten(e))typeof n!="object"?(t[r]=n,r++):(t.set(n,r),r+=n.length);return t}get length(){return this._buildLength()}_buildContents(){return[this._contents,...this._children.map(t=>t._buildContents())]}_buildLength(){let t;return Array.isArray(this._contents)?t=this._contents.reduce((e,r)=>e+(r.length===void 0?1:r.length),0):t=this._contents.length===void 0?1:this._contents.length,t+this._children.reduce((e,r)=>e+r.length,0)}addChild(t){this._children.push(t)}};var c=class extends A{constructor(t,{contents:e,children:r}={}){super({name:t,contents:e,children:r})}_buildContents(){return[...this._lengthBytes,...A.stringToByteArray(this._name),...super._buildContents()]}_buildLength(){return this._length||(this._length=4+this._name.length+super._buildLength(),this._lengthBytes=A.getUint32(this._length)),this._length}};var N0=class s extends A{constructor(t,{contents:e,tags:r}={}){super({name:t,contents:e,children:r})}static getLength(t){let e=A.getUint32(t);return e.every((r,n,o)=>r===0?(o[n]=128,!0):!1),e}_buildContents(){return[this._name,...this._lengthBytes,...super._buildContents()]}_buildLength(){if(!this._length){let t=super._buildLength();this._lengthBytes=s.getLength(t),this._length=1+t+this._lengthBytes.length}return this._length}addTag(t){this.addChild(t)}};var O0=class{constructor(t){this._codec=t}getCodecBox(t){switch(this._codec){case"mp3":return this.getMp4a(t,107);case Q0:return this.getMp4a(t,64);case f0:return this.getOpus(t);case qt:return this.getFlaC(t)}}getOpus(t){return new c("Opus",{contents:[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channels,0,t.bitDepth,0,0,0,0,c.getUint16(t.sampleRate),0,0],children:[new c("dOps",{contents:[0,t.channels,c.getUint16(t.preSkip),c.getUint32(t.inputSampleRate),c.getInt16(t.outputGain),t.channelMappingFamily,t.channelMappingFamily!==0?[t.streamCount,t.coupledStreamCount,t.channelMappingTable]:[]]})]})}getFlaC(t){return new c("fLaC",{contents:[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channels,0,t.bitDepth,0,0,0,0,c.getUint16(t.sampleRate),0,0],children:[new c("dfLa",{contents:[0,0,0,0,...t.streamInfo||[128,0,0,34,c.getUint16(t.blockSize),c.getUint16(t.blockSize),0,0,0,0,0,0,c.getUint32(t.sampleRate<<12|t.channels<<8|t.bitDepth-1<<4),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]})]})}getMp4a(t,e){let r=new N0(4,{contents:[e,21,0,0,0,0,0,0,0,0,0,0,0]});return e===64&&r.addTag(new N0(5,{contents:t.audioSpecificConfig})),new c("mp4a",{contents:[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channels,0,16,0,0,0,0,c.getUint16(t.sampleRate),0,0],children:[new c("esds",{contents:[0,0,0,0],children:[new N0(3,{contents:[0,1,0],tags:[r,new N0(6,{contents:2})]})]})]})}getInitializationSegment({header:t,samples:e}){return new A({children:[new c("ftyp",{contents:[c.stringToByteArray("iso5"),0,0,2,0,c.stringToByteArray("iso6mp41")]}),new c("moov",{children:[new c("mvhd",{contents:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,232,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2]}),new c("trak",{children:[new c("tkhd",{contents:[0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0]}),new c("mdia",{children:[new c("mdhd",{contents:[0,0,0,0,0,0,0,0,0,0,0,0,c.getUint32(t.sampleRate),0,0,0,0,85,196,0,0]}),new c("hdlr",{contents:[0,0,0,0,c.stringToByteArray("mhlr"),c.stringToByteArray("soun"),0,0,0,0,0,0,0,0,0,0,0,0,0]}),new c("minf",{children:[new c("stbl",{children:[new c("stsd",{contents:[0,0,0,0,0,0,0,1],children:[this.getCodecBox(t)]}),new c("stts",{contents:[0,0,0,0,0,0,0,0]}),new c("stsc",{contents:[0,0,0,0,0,0,0,0]}),new c("stsz",{contents:[0,0,0,0,0,0,0,0,0,0,0,0]}),new c("stco",{contents:[0,0,0,0,0,0,0,0]})]})]})]})]}),new c("mvex",{children:[new c("trex",{contents:[0,0,0,0,0,0,0,1,0,0,0,1,c.getUint32(e),0,0,0,0,0,0,0,0]})]})]})]}).contents}getSamplesPerFrame(t){return this._codec===Q0?t.map(({data:e,header:r})=>c.getUint32(e.length-r.length)):t.map(({data:e})=>c.getUint32(e.length))}getFrameData(t){return this._codec===Q0?t.map(({data:e,header:r})=>e.subarray(r.length)):t.map(({data:e})=>e)}getMediaSegment(t){return new A({children:[new c("moof",{children:[new c("mfhd",{contents:[0,0,0,0,0,0,0,0]}),new c("traf",{children:[new c("tfhd",{contents:[0,2,0,0,0,0,0,1]}),new c("tfdt",{contents:[0,0,0,0,0,0,0,0]}),new c("trun",{contents:[0,0,2,1,c.getUint32(t.length),c.getUint32(92+t.length*4),...this.getSamplesPerFrame(t)]})]})]}),new c("mdat",{contents:this.getFrameData(t)})]}).contents}};var On=(...s)=>s.flatMap(t=>{let e=[];for(let r=t.length;r>=0;r-=255)e.push(r>=255?255:r);return e}),Vn=(...s)=>{console.error(tt,s.reduce((t,e)=>t+`
+  `+e,""))};var l=class s extends A{constructor(t,{contents:e,children:r,isUnknownLength:n=!1}={}){super({name:t,contents:e,children:r}),this._isUnknownLength=n}static getUintVariable(t){let e;if(t<127)e=[128|t];else if(t<16383)e=A.getUint16(t),e[0]|=64;else if(t<2097151)e=A.getUint32(t).subarray(1),e[0]|=32;else if(t<268435455)e=A.getUint32(t),e[0]|=16;else if(t<34359738367)e=A.getUint64(t).subarray(3),e[0]|=8;else if(t<4398046511103)e=A.getUint64(t).subarray(2),e[0]|=4;else if(t<562949953421311)e=A.getUint64(t).subarray(1),e[0]|=2;else if(t<72057594037927940)e=A.getUint64(t),e[0]|=1;else if(typeof t!="number"||isNaN(t))throw Vn(`EBML Variable integer must be a number, instead received ${t}`),new Error(tt+": Unable to encode WEBM");return e}_buildContents(){return[...this._name,...this._lengthBytes,...super._buildContents()]}_buildLength(){return this._length||(this._contentLength=super._buildLength(),this._lengthBytes=this._isUnknownLength?[1,255,255,255,255,255,255,255]:s.getUintVariable(this._contentLength),this._length=this._name.length+this._lengthBytes.length+this._contentLength),this._length}},g={AlphaMode:[83,192],AspectRatioType:[84,179],AttachedFile:[97,167],AttachmentLink:[116,70],Attachments:[25,65,164,105],Audio:[225],BitDepth:[98,100],BitsPerChannel:[85,178],Block:[161],BlockAddID:[238],BlockAdditional:[165],BlockAdditions:[117,161],BlockDuration:[155],BlockGroup:[160],BlockMore:[166],CbSubsamplingHorz:[85,181],CbSubsamplingVert:[85,182],Channels:[159],ChapCountry:[67,126],ChapLanguage:[67,124],ChapProcess:[105,68],ChapProcessCodecID:[105,85],ChapProcessCommand:[105,17],ChapProcessData:[105,51],ChapProcessPrivate:[69,13],ChapProcessTime:[105,34],ChapString:[133],ChapterAtom:[182],ChapterDisplay:[128],ChapterFlagEnabled:[69,152],ChapterFlagHidden:[152],ChapterPhysicalEquiv:[99,195],Chapters:[16,67,167,112],ChapterSegmentEditionUID:[110,188],ChapterSegmentUID:[110,103],ChapterStringUID:[86,84],ChapterTimeEnd:[146],ChapterTimeStart:[145],ChapterTrack:[143],ChapterTrackNumber:[137],ChapterTranslate:[105,36],ChapterTranslateCodec:[105,191],ChapterTranslateEditionUID:[105,252],ChapterTranslateID:[105,165],ChapterUID:[115,196],ChromaSitingHorz:[85,183],ChromaSitingVert:[85,184],ChromaSubsamplingHorz:[85,179],ChromaSubsamplingVert:[85,180],Cluster:[31,67,182,117],CodecDecodeAll:[170],CodecDelay:[86,170],CodecID:[134],CodecName:[37,134,136],CodecPrivate:[99,162],CodecState:[164],Colour:[85,176],ColourSpace:[46,181,36],ContentCompAlgo:[66,84],ContentCompression:[80,52],ContentCompSettings:[66,85],ContentEncAlgo:[71,225],ContentEncKeyID:[71,226],ContentEncoding:[98,64],ContentEncodingOrder:[80,49],ContentEncodings:[109,128],ContentEncodingScope:[80,50],ContentEncodingType:[80,51],ContentEncryption:[80,53],ContentSigAlgo:[71,229],ContentSigHashAlgo:[71,230],ContentSigKeyID:[71,228],ContentSignature:[71,227],CRC32:[191],CueBlockNumber:[83,120],CueClusterPosition:[241],CueCodecState:[234],CueDuration:[178],CuePoint:[187],CueReference:[219],CueRefTime:[150],CueRelativePosition:[240],Cues:[28,83,187,107],CueTime:[179],CueTrack:[247],CueTrackPositions:[183],DateUTC:[68,97],DefaultDecodedFieldDuration:[35,78,122],DefaultDuration:[35,227,131],DiscardPadding:[117,162],DisplayHeight:[84,186],DisplayUnit:[84,178],DisplayWidth:[84,176],DocType:[66,130],DocTypeReadVersion:[66,133],DocTypeVersion:[66,135],Duration:[68,137],EBML:[26,69,223,163],EBMLMaxIDLength:[66,242],EBMLMaxSizeLength:[66,243],EBMLReadVersion:[66,247],EBMLVersion:[66,134],EditionEntry:[69,185],EditionFlagDefault:[69,219],EditionFlagHidden:[69,189],EditionFlagOrdered:[69,221],EditionUID:[69,188],FieldOrder:[157],FileData:[70,92],FileDescription:[70,126],FileMimeType:[70,96],FileName:[70,110],FileUID:[70,174],FlagDefault:[136],FlagEnabled:[185],FlagForced:[85,170],FlagInterlaced:[154],FlagLacing:[156],Info:[21,73,169,102],LaceNumber:[204],Language:[34,181,156],LuminanceMax:[85,217],LuminanceMin:[85,218],MasteringMetadata:[85,208],MatrixCoefficients:[85,177],MaxBlockAdditionID:[85,238],MaxCache:[109,248],MaxCLL:[85,188],MaxFALL:[85,189],MinCache:[109,231],MuxingApp:[77,128],Name:[83,110],NextFilename:[62,131,187],NextUID:[62,185,35],OutputSamplingFrequency:[120,181],PixelCropBottom:[84,170],PixelCropLeft:[84,204],PixelCropRight:[84,221],PixelCropTop:[84,187],PixelHeight:[186],PixelWidth:[176],Position:[167],PrevFilename:[60,131,171],PrevSize:[171],PrevUID:[60,185,35],Primaries:[85,187],PrimaryBChromaticityX:[85,213],PrimaryBChromaticityY:[85,214],PrimaryGChromaticityX:[85,211],PrimaryGChromaticityY:[85,212],PrimaryRChromaticityX:[85,209],PrimaryRChromaticityY:[85,210],Range:[85,185],ReferenceBlock:[251],ReferencePriority:[250],SamplingFrequency:[181],Seek:[77,187],SeekHead:[17,77,155,116],SeekID:[83,171],SeekPosition:[83,172],SeekPreRoll:[86,187],Segment:[24,83,128,103],SegmentFamily:[68,68],SegmentFilename:[115,132],SegmentUID:[115,164],SilentTrackNumber:[88,215],SilentTracks:[88,84],SimpleBlock:[163],SimpleTag:[103,200],Slices:[142],StereoMode:[83,184],Tag:[115,115],TagAttachmentUID:[99,198],TagBinary:[68,133],TagChapterUID:[99,196],TagDefault:[68,132],TagEditionUID:[99,201],TagLanguage:[68,122],TagName:[69,163],Tags:[18,84,195,103],TagString:[68,135],TagTrackUID:[99,197],Targets:[99,192],TargetType:[99,202],TargetTypeValue:[104,202],Timestamp:[231],TimestampScale:[42,215,177],TimeSlice:[232],Title:[123,169],TrackCombinePlanes:[227],TrackEntry:[174],TrackJoinBlocks:[233],TrackJoinUID:[237],TrackNumber:[215],TrackOperation:[226],TrackOverlay:[111,171],TrackPlane:[228],TrackPlaneType:[230],TrackPlaneUID:[229],Tracks:[22,84,174,107],TrackTranslate:[102,36],TrackTranslateCodec:[102,191],TrackTranslateEditionUID:[102,252],TrackTranslateTrackID:[102,165],TrackType:[131],TrackUID:[115,197],TransferCharacteristics:[85,186],Video:[224],Void:[236],WhitePointChromaticityX:[85,215],WhitePointChromaticityY:[85,216],WritingApp:[87,65]};var yt=class{constructor(t){switch(t){case f0:{this._codecId="A_OPUS",this._getCodecSpecificTrack=e=>[new l(g.CodecDelay,{contents:l.getUint32(Math.round(e.preSkip*this._timestampScale))}),new l(g.SeekPreRoll,{contents:l.getUint32(Math.round(3840*this._timestampScale))}),new l(g.CodecPrivate,{contents:e.data})];break}case Xt:{this._codecId="A_VORBIS",this._getCodecSpecificTrack=e=>[new l(g.CodecPrivate,{contents:[2,On(e.data,e.vorbisComments),e.data,e.vorbisComments,e.vorbisSetup]})];break}}}getInitializationSegment({header:t}){return this._timestampScale=1e9/t.sampleRate,new A({children:[new l(g.EBML,{children:[new l(g.EBMLVersion,{contents:1}),new l(g.EBMLReadVersion,{contents:1}),new l(g.EBMLMaxIDLength,{contents:4}),new l(g.EBMLMaxSizeLength,{contents:8}),new l(g.DocType,{contents:l.stringToByteArray(H0)}),new l(g.DocTypeVersion,{contents:4}),new l(g.DocTypeReadVersion,{contents:2})]}),new l(g.Segment,{isUnknownLength:!0,children:[new l(g.Info,{children:[new l(g.TimestampScale,{contents:l.getUint32(Math.floor(this._timestampScale))}),new l(g.MuxingApp,{contents:l.stringToByteArray(tt)}),new l(g.WritingApp,{contents:l.stringToByteArray(tt)})]}),new l(g.Tracks,{children:[new l(g.TrackEntry,{children:[new l(g.TrackNumber,{contents:1}),new l(g.TrackUID,{contents:1}),new l(g.FlagLacing,{contents:0}),new l(g.CodecID,{contents:l.stringToByteArray(this._codecId)}),new l(g.TrackType,{contents:2}),new l(g.Audio,{children:[new l(g.Channels,{contents:t.channels}),new l(g.SamplingFrequency,{contents:l.getFloat64(t.sampleRate)}),new l(g.BitDepth,{contents:t.bitDepth})]}),...this._getCodecSpecificTrack(t)]})]})]})]}).contents}getMediaSegment(t){let e=t[0].totalSamples;return new l(g.Cluster,{children:[new l(g.Timestamp,{contents:l.getUintVariable(e)}),...t.map(({data:r,totalSamples:n})=>new l(g.SimpleBlock,{contents:[129,l.getInt16(n-e),128,r]}))]}).contents}};var fr=()=>{},br=(s,t=H0)=>{switch(s){case"mpeg":return`${jt}"${"mp3"}"`;case"aac":return`${jt}"${Q0}"`;case"flac":return`${jt}"${qt}"`;case"vorbis":return`${pn}"${Xt}"`;case"opus":return t===H0?`${pn}"${f0}"`:`${jt}"${f0}"`}},Jt=class{constructor(t,e={}){this._inputMimeType=t,this.PREFERRED_CONTAINER=e.preferredContainer||H0,this.MIN_FRAMES=e.minFramesPerSegment||4,this.MAX_FRAMES=e.maxFramesPerSegment||50,this.MIN_FRAMES_LENGTH=e.minBytesPerSegment||1022,this.MAX_SAMPLES_PER_SEGMENT=1/0,this._onMimeType=e.onMimeType||fr,e.codec&&(this._container=this._getContainer(e.codec),this._onMimeType(this._mimeType)),this._frames=[],this._codecParser=new vn(t,{onCodec:r=>{this._container=this._getContainer(r),this._onMimeType(this._mimeType)},onCodecUpdate:e.onCodecUpdate,enableLogging:e.enableLogging,enableFrameCRC32:!1})}get mimeType(){return this._mimeType}get inputMimeType(){return this._inputMimeType}*iterator(t){t.constructor===Uint8Array?yield*this._processFrames([...this._codecParser.parseChunk(t)].flatMap(e=>e.codecFrames||e)):Array.isArray(t)&&(yield*this._processFrames(t))}*_processFrames(t){if(this._frames.push(...t),this._frames.length){let e=this._groupFrames();if(e.length){this._sentInitialSegment||(this._sentInitialSegment=!0,yield this._container.getInitializationSegment(e[0][0]));for(let r of e)yield this._container.getMediaSegment(r)}}}_groupFrames(){let t=[[]],e=t[0],r=0;for(let n of this._frames)(e.length===this.MAX_FRAMES||r>=this.MAX_SAMPLES_PER_SEGMENT)&&(r=0,t.push(e=[])),e.push(n),r+=n.samples;return this._frames=e.length<this.MIN_FRAMES||e.reduce((n,o)=>n+o.data.length,0)<this.MIN_FRAMES_LENGTH?t.pop():[],t}_getContainer(t){switch(this._mimeType=br(t,this.PREFERRED_CONTAINER),t){case"mpeg":return new O0("mp3");case"aac":return new O0(Q0);case"flac":return new O0(qt);case"vorbis":return this.MAX_SAMPLES_PER_SEGMENT=32767,new yt(Xt);case"opus":return this.PREFERRED_CONTAINER===H0?(this.MAX_SAMPLES_PER_SEGMENT=32767,new yt(f0)):new O0(f0)}}};return jn(gr);})();"""
+
 BOOTLOADER_SCRIPT = """
-    <!-- SynapseFM Player Bootloader -->
+    <!-- SynapseFM Player Bootloader: mse-audio-wrapper (LGPL-3.0) -->
+    <script id="synapsefm-mse-wrapper">""" + _MSE_WRAPPER_JS + """</script>
     <script id="synapsefm-player-bootloader" data-version="{version}">
     (function() {
         'use strict';
@@ -1173,11 +1183,6 @@ BOOTLOADER_SCRIPT = """
         var pollTimer = null;
         var abortCtrl = null;
         var dismissedNonce = null; // tracks dismissed request nonce
-        // -- state (Chrome -----------------------------------------------
-        var mediaSource = null;
-        var sourceBuffer = null;
-        var msQueue = [];
-        var msAppending = false;
 
 
         // -- Message Listener --------------------------------------------
@@ -1489,58 +1494,151 @@ BOOTLOADER_SCRIPT = """
         }
 
         // -- Audio Streaming ---------------------------------------------
-        // Primary: MediaSource + appendBuffer (low-latency, gapless)
+        // Primary: MSE + fMP4 wrapping (via mse-audio-wrapper)
+        //   Raw MP3 data is wrapped in ISO BMFF (fMP4) containers
+        //   which provide explicit sample-accurate timing metadata.
+        //   This eliminates the encoder delay micro-gaps that raw
+        //   audio/mpeg in MSE produces.
         // Fallback: fetch -> ReadableStream -> blob queue (native decoder)
-        // MediaSource.isTypeSupported() handles browser capability detection.
 
-        var canMediaSource = (
-            typeof MediaSource !== 'undefined' &&
-            MediaSource.isTypeSupported('audio/mpeg')
-        );
+        var MSEWrapper = (typeof MSEAudioWrapperModule !== 'undefined')
+            ? MSEAudioWrapperModule.MSEAudioWrapper
+            : null;
+        var canFMP4MSE = !!(MSEWrapper && typeof MediaSource !== 'undefined');
 
         function startStream() {
             if (!currentConfig) return;
 
-            if (canMediaSource) {
-                startMediaSourceStream();
+            if (canFMP4MSE) {
+                startFMP4Stream();
             } else {
                 startFetchBlobStream();
             }
         }
 
 
-        // -- Chrome: MediaSource Path ------------------------------------
+        // -- fMP4 MSE Path (all browsers with MSE) -------------------------
+        var MS_BATCH_SIZE = 65536; // 64KB (~4s at 128kbps)
+        var MS_PLAY_THRESHOLD = 5; // seconds buffered before starting
+        var MS_REFILL_THRESHOLD = 1; // pause if buffer drops below this
         var msPruneInterval = null;
+        var msWorker = null;
+        var mediaSource = null;
+        var sourceBuffer = null;
+        var msQueue = [];
+        var msAppending = false;
 
-        function startMediaSourceStream() {
+        // Inline Web Worker for off-thread fetch + accumulation
+        var MS_WORKER_SRC = [
+            'var batchSize = 65536;',
+            'var accum = [];',
+            'var accumBytes = 0;',
+            'var ctrl = null;',
+            '',
+            'function flush() {',
+            '  var merged = new Uint8Array(accumBytes);',
+            '  var off = 0;',
+            '  for (var i = 0; i < accum.length; i++) {',
+            '    merged.set(accum[i], off);',
+            '    off += accum[i].length;',
+            '  }',
+            '  accum = [];',
+            '  accumBytes = 0;',
+            '  postMessage({ type: "chunk", data: merged.buffer }, [merged.buffer]);',
+            '}',
+            '',
+            'self.onmessage = function(evt) {',
+            '  var msg = evt.data;',
+            '  if (msg.type === "start") {',
+            '    ctrl = new AbortController();',
+            '    fetch(msg.url, {',
+            '      mode: "cors",',
+            '      headers: { "Authorization": "Bearer " + msg.key },',
+            '      signal: ctrl.signal',
+            '    }).then(function(response) {',
+            '      if (!response.ok) {',
+            '        postMessage({ type: "error", status: response.status });',
+            '        return;',
+            '      }',
+            '      var reader = response.body.getReader();',
+            '      function pump() {',
+            '        reader.read().then(function(result) {',
+            '          if (result.done) {',
+            '            if (accumBytes > 0) flush();',
+            '            postMessage({ type: "done" });',
+            '            return;',
+            '          }',
+            '          accum.push(new Uint8Array(result.value));',
+            '          accumBytes += result.value.byteLength;',
+            '          if (accumBytes >= batchSize) flush();',
+            '          pump();',
+            '        }).catch(function(err) {',
+            '          if (err.name !== "AbortError") {',
+            '            if (accumBytes > 0) flush();',
+            '            postMessage({ type: "error", status: 0 });',
+            '          }',
+            '        });',
+            '      }',
+            '      pump();',
+            '    }).catch(function(err) {',
+            '      if (err.name !== "AbortError") {',
+            '        postMessage({ type: "error", status: 0 });',
+            '      }',
+            '    });',
+            '  } else if (msg.type === "stop") {',
+            '    if (ctrl) { ctrl.abort(); ctrl = null; }',
+            '    accum = [];',
+            '    accumBytes = 0;',
+            '  }',
+            '};',
+        ''].reduce(function(a, b) { return a + '\\n' + b; });
+
+        function createStreamWorker() {
+            try {
+                var blob = new Blob([MS_WORKER_SRC], { type: 'application/javascript' });
+                var url = URL.createObjectURL(blob);
+                var w = new Worker(url);
+                URL.revokeObjectURL(url);
+                return w;
+            } catch(e) {
+                return null;
+            }
+        }
+
+        function startFMP4Stream() {
             var cfg = currentConfig;
-
-            // -- up any previous MediaSource state ---------------------------
             stopPlayback();
-            currentConfig = cfg; // restore after stopPlayback clears it
+            currentConfig = cfg;
+
+            // Create the fMP4 wrapper for audio/mpeg input
+            var wrapper = new MSEWrapper('audio/mpeg', {
+                preferredContainer: 'fmp4',
+                minFramesPerSegment: 2,
+                minBytesPerSegment: 576
+            });
 
             mediaSource = new MediaSource();
             audio = new Audio();
             audio.volume = (document.getElementById('sfm-volume') || {value:80}).value / 100;
             audio.src = URL.createObjectURL(mediaSource);
 
-            // If MediaSource fails, fall back to blob path
+            // If fMP4 MSE fails, fall back to blob path
             audio.addEventListener('error', function() {
-                canMediaSource = false;
+                canFMP4MSE = false;
                 stopPlayback();
                 currentConfig = cfg;
                 startFetchBlobStream();
             });
 
             mediaSource.addEventListener('sourceopen', function() {
+                // Get the output MIME type from the wrapper
+                // For mpeg input, this is 'audio/mp4; codecs="mp3"'
+                var outMime = wrapper.mimeType || 'audio/mp4; codecs="mp3"';
                 try {
-                    sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
-                    // Sequence mode: ignore internal MP3 timestamps and
-                    // play chunks in append order. Prevents timestamp
-                    // discontinuities from causing micro-gaps in live streams.
+                    sourceBuffer = mediaSource.addSourceBuffer(outMime);
                     try { sourceBuffer.mode = 'sequence'; } catch(e) {}
                 } catch(e) {
-                    canMediaSource = false;
+                    canFMP4MSE = false;
                     stopPlayback();
                     currentConfig = cfg;
                     startFetchBlobStream();
@@ -1569,13 +1667,8 @@ BOOTLOADER_SCRIPT = """
                     if (sourceBuffer.buffered.length === 0) return;
                     var ct = audio.currentTime || 0;
                     var end = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
-                    // Skip pruning if buffer ahead of playback is thin.
-                    // remove() blocks appendBuffer() while active, so
-                    // pruning a thin buffer causes underruns.
                     if (end - ct < 10) return;
                     var start = sourceBuffer.buffered.start(0);
-                    // Keep 30s behind currentTime (generous to avoid
-                    // pruning during brief playback stalls)
                     var removeEnd = Math.max(start, ct - 30);
                     if (removeEnd > start + 1) {
                         try { sourceBuffer.remove(start, removeEnd); } catch(e) {}
@@ -1587,62 +1680,173 @@ BOOTLOADER_SCRIPT = """
                     appendNext();
                 });
 
-                // Periodic buffer pruning (every 60s)
                 msPruneInterval = setInterval(pruneBuffer, 60000);
 
-                abortCtrl = new AbortController();
-                fetch(cfg.streamUrl, {
-                    mode: 'cors',
-                    headers: { 'Authorization': 'Bearer ' + cfg.streamKey },
-                    signal: abortCtrl.signal,
-                }).then(function(response) {
-                    if (!response.ok) {
-                        setStatus('Error: ' + response.status);
-                        return;
-                    }
-                    var reader = response.body.getReader();
-                    function pump() {
-                        reader.read().then(function(result) {
-                            if (result.done) {
-                                // Stream closed by server - reconnect
-                                reconnect();
-                                return;
-                            }
-                            msQueue.push(result.value);
-                            appendNext();
-                            pump();
-                        }).catch(function(err) {
-                            if (err.name !== 'AbortError') {
-                                // Network error - clean up and reconnect
-                                if (msPruneInterval) {
-                                    clearInterval(msPruneInterval);
-                                    msPruneInterval = null;
-                                }
-                                reconnect();
-                            }
-                        });
-                    }
-                    pump();
+                var msPlayStarted = false;
+                var msStalled = false;
 
-                    // Defer play until first data arrives in the buffer
-                    var playOnce = function() {
-                        sourceBuffer.removeEventListener('updateend', playOnce);
+                function getBufferedAhead() {
+                    if (!sourceBuffer.buffered.length) return 0;
+                    return sourceBuffer.buffered.end(
+                        sourceBuffer.buffered.length - 1
+                    ) - (audio.currentTime || 0);
+                }
+
+                function tryStartPlayback() {
+                    if (msPlayStarted) return;
+                    var ahead = getBufferedAhead();
+                    if (ahead >= MS_PLAY_THRESHOLD) {
+                        msPlayStarted = true;
                         audio.play().then(function() {
                             isPlaying = true;
+                            var btn = document.getElementById('sfm-play-btn');
+                            if (btn) btn.textContent = '\\u23F8';
                             setStatus('\\u25CF Live', true);
                         }).catch(function() {
                             setStatus('Click play to start');
                         });
-                    };
-                    sourceBuffer.addEventListener('updateend', playOnce);
-                }).catch(function(err) {
-                    if (err.name !== 'AbortError') {
-                        reconnect();
+                    }
+                }
+
+                function checkBufferHealth() {
+                    if (!msPlayStarted || audio.paused) return;
+                    var ahead = getBufferedAhead();
+                    if (ahead < MS_REFILL_THRESHOLD && !msStalled) {
+                        msStalled = true;
+                        audio.pause();
+                        setStatus('Buffering...');
+                    }
+                    if (msStalled && ahead >= MS_PLAY_THRESHOLD) {
+                        msStalled = false;
+                        audio.play().then(function() {
+                            setStatus('\\u25CF Live', true);
+                        }).catch(function() {});
+                    }
+                }
+
+                sourceBuffer.addEventListener('updateend', function() {
+                    if (!msPlayStarted) tryStartPlayback();
+                    if (msStalled) checkBufferHealth();
+                });
+
+                var healthInterval = setInterval(checkBufferHealth, 500);
+
+                audio.addEventListener('waiting', function() {
+                    if (msPlayStarted) {
+                        msStalled = true;
+                        setStatus('Buffering...');
                     }
                 });
+                audio.addEventListener('playing', function() {
+                    if (msPlayStarted && !msStalled) {
+                        setStatus('\\u25CF Live', true);
+                    }
+                });
+
+                // Process incoming raw MP3 through fMP4 wrapper
+                function onRawChunk(arrayBuffer) {
+                    var raw = new Uint8Array(arrayBuffer);
+                    // wrapper.iterator() yields fMP4 segments
+                    var segments = wrapper.iterator(raw);
+                    var seg = segments.next();
+                    while (!seg.done) {
+                        msQueue.push(seg.value);
+                        seg = segments.next();
+                    }
+                    appendNext();
+                }
+
+                // Start network fetch via Worker or main thread
+                msWorker = createStreamWorker();
+                if (msWorker) {
+                    msWorker.onmessage = function(evt) {
+                        var msg = evt.data;
+                        if (msg.type === 'chunk') {
+                            onRawChunk(msg.data);
+                        } else if (msg.type === 'done') {
+                            reconnect();
+                        } else if (msg.type === 'error') {
+                            if (msPruneInterval) {
+                                clearInterval(msPruneInterval);
+                                msPruneInterval = null;
+                            }
+                            clearInterval(healthInterval);
+                            reconnect();
+                        }
+                    };
+                    msWorker.onerror = function() {
+                        msWorker = null;
+                        startMainThreadPump(cfg, onRawChunk, healthInterval);
+                    };
+                    msWorker.postMessage({
+                        type: 'start',
+                        url: cfg.streamUrl,
+                        key: cfg.streamKey
+                    });
+                } else {
+                    startMainThreadPump(cfg, onRawChunk, healthInterval);
+                }
             });
         }
 
+        // Main-thread fetch fallback when Workers are unavailable
+        function startMainThreadPump(cfg, onChunk, healthInterval) {
+            abortCtrl = new AbortController();
+            fetch(cfg.streamUrl, {
+                mode: 'cors',
+                headers: { 'Authorization': 'Bearer ' + cfg.streamKey },
+                signal: abortCtrl.signal,
+            }).then(function(response) {
+                if (!response.ok) {
+                    setStatus('Error: ' + response.status);
+                    return;
+                }
+                var reader = response.body.getReader();
+                var msAccum = [];
+                var msAccumBytes = 0;
+
+                function flushAccum() {
+                    var merged = new Uint8Array(msAccumBytes);
+                    var off = 0;
+                    for (var i = 0; i < msAccum.length; i++) {
+                        merged.set(msAccum[i], off);
+                        off += msAccum[i].length;
+                    }
+                    msAccum = [];
+                    msAccumBytes = 0;
+                    onChunk(merged.buffer);
+                }
+
+                function pump() {
+                    reader.read().then(function(result) {
+                        if (result.done) {
+                            if (msAccumBytes > 0) flushAccum();
+                            reconnect();
+                            return;
+                        }
+                        msAccum.push(result.value);
+                        msAccumBytes += result.value.length;
+                        if (msAccumBytes >= MS_BATCH_SIZE) flushAccum();
+                        pump();
+                    }).catch(function(err) {
+                        if (err.name !== 'AbortError') {
+                            if (msAccumBytes > 0) flushAccum();
+                            if (msPruneInterval) {
+                                clearInterval(msPruneInterval);
+                                msPruneInterval = null;
+                            }
+                            clearInterval(healthInterval);
+                            reconnect();
+                        }
+                    });
+                }
+                pump();
+            }).catch(function(err) {
+                if (err.name !== 'AbortError') {
+                    reconnect();
+                }
+            });
+        }
 
         // -- Firefox: Fetch + Blob Queue Path ----------------------------
         var blobQueue = [];
@@ -1720,7 +1924,7 @@ BOOTLOADER_SCRIPT = """
             var delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), 16000);
             setStatus('Reconnecting (' + reconnectAttempts + '/5)...');
             setTimeout(function() {
-                if (isPlaying || blobPlaying) startFetchBlobStream();
+                if (isPlaying || blobPlaying) startStream();
             }, delay);
         }
 
@@ -1853,7 +2057,18 @@ BOOTLOADER_SCRIPT = """
             blobPlaying = false;
             reconnectAttempts = 0;
 
+            // Clean up Web Worker
+            if (msWorker) {
+                msWorker.postMessage({ type: 'stop' });
+                msWorker.terminate();
+                msWorker = null;
+            }
+
             // Clean up MediaSource
+            if (msPruneInterval) {
+                clearInterval(msPruneInterval);
+                msPruneInterval = null;
+            }
             mediaSource = null;
             sourceBuffer = null;
             msQueue = [];
