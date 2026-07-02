@@ -1,18 +1,11 @@
 """
-SynapseFM Integration Tool for Open WebUI
-
-Provides LLM-accessible tools to browse stations, see what's playing,
-and stream live AI-generated radio from SynapseFM — all within the
-Open WebUI chat interface.
-
-Security: OWASP API Security Top 10, OWASP LLM Top 10 (2025), NIST SP 800-53
-- Zero PII exposure (aggregate metadata only)
-- Stream key encrypted in Valves (never sent to LLM)
-- SSRF-hardened HTTP client (path allowlist, redirect blocking, size caps)
-- Output sanitization (key pattern redaction, HTML escaping)
-- Dual return path (HTMLResponse for player, plain string for LLM context)
-
-Installation: Paste this file into Open WebUI → Workspace → Tools
+title: Synapse-FM
+description: Stream live AI-generated radio from Synapse-FM directly in your Open WebUI chat interface.
+author: ther3zz
+author_url: https://github.com/ther3zz
+git_url: https://github.com/ther3zz/synapse-fm_open-webui_tool.git
+version: 1.0.0
+license: MIT
 """
 
 import json
