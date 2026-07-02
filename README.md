@@ -1,6 +1,8 @@
-# SynapseFM Integration Tool for Open WebUI
+# Synapse-FM — Open WebUI Tool
 
-Stream live AI-generated radio from [SynapseFM](https://synapse-fm.ai) directly in your Open WebUI chat interface.
+Stream live AI-generated radio from [Synapse-FM](https://synapse-fm.ai) directly in your Open WebUI chat interface.
+
+[![Open WebUI Community](https://img.shields.io/badge/Open%20WebUI-Community-blue)](https://openwebui.com/posts/ef63ba70-133b-488d-8a09-f177398aec2c)
 
 ## Features
 
