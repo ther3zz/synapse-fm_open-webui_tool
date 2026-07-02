@@ -95,8 +95,6 @@ handle gapless transitions natively, eliminating the micro-stutters that raw
 
 A **Blob queue fallback** is used for browsers without MSE support.
 
-See [`docs/architecture.md`](docs/architecture.md) for full technical details
-including security model, data flow, and API surface.
 
 ## Development
 
@@ -115,8 +113,6 @@ synapse-fm_open-webui_tool/
 │   ├── bootloader.py          # Persistent player injection + streaming engine
 │   └── vendor/
 │       └── mse-audio-wrapper.min.js  # MP3→fMP4 transmuxer (LGPL-3.0)
-├── docs/
-│   └── architecture.md        # Full technical architecture documentation
 └── README.md
 ```
 
