@@ -1134,8 +1134,9 @@ def _build_inner_player_html(
 
 # --- BEGIN MODULE: bootloader ---
 # Marker comments used to identify the bootloader in index.html
-BOOTLOADER_START = "<!-- SynapseFM Player Bootloader -->"
-BOOTLOADER_END_TAG = "</script>"
+# Must match BOTH old (single-script) and new (vendor + bootloader) layouts
+BOOTLOADER_START = "<!-- SynapseFM Player Bootloader"
+BOOTLOADER_END_SENTINEL = "<!-- /SynapseFM -->"
 BOOTLOADER_ID = "synapsefm-player-bootloader"
 
 
@@ -2137,24 +2138,43 @@ BOOTLOADER_SCRIPT = """
 
     })();
     </script>
+    <!-- /SynapseFM -->
 """
 
 
 def strip_bootloader(content):
-    """Remove existing SynapseFM bootloader from HTML content."""
-    start_marker = BOOTLOADER_START
-    if start_marker not in content:
+    """Remove existing SynapseFM bootloader from HTML content.
+
+    Handles both old single-script layout and new two-script layout
+    (vendor lib + bootloader). Uses the end sentinel comment as the
+    primary boundary; falls back to finding the last </script> after
+    the bootloader script ID if the sentinel is missing.
+    """
+    if BOOTLOADER_START not in content:
         return content
 
-    start_idx = content.find(start_marker)
-    # Find the closing </script> after the start marker
-    end_idx = content.find(BOOTLOADER_END_TAG, start_idx)
-    if end_idx == -1:
-        return content
+    start_idx = content.find(BOOTLOADER_START)
 
-    end_idx += len(BOOTLOADER_END_TAG)
+    # Try end sentinel first (new layout)
+    end_idx = content.find(BOOTLOADER_END_SENTINEL, start_idx)
+    if end_idx != -1:
+        end_idx += len(BOOTLOADER_END_SENTINEL)
+    else:
+        # Fallback: find </script> after the bootloader script ID
+        id_idx = content.find(BOOTLOADER_ID, start_idx)
+        if id_idx != -1:
+            end_idx = content.find("</script>", id_idx)
+            if end_idx != -1:
+                end_idx += len("</script>")
+        if end_idx == -1:
+            # Last resort: first </script> after start
+            end_idx = content.find("</script>", start_idx)
+            if end_idx == -1:
+                return content
+            end_idx += len("</script>")
+
     # Consume trailing newline if present
-    if end_idx < len(content) and content[end_idx] == "\\n":
+    if end_idx < len(content) and content[end_idx] == "\n":
         end_idx += 1
 
     return content[:start_idx] + content[end_idx:]
@@ -2206,8 +2226,10 @@ def _inject_bootloader(path):
         with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Strip any existing bootloader first (handles upgrades)
-        content = strip_bootloader(content)
+        # Strip any existing bootloader(s) first (handles upgrades
+        # and the case where both old and new layouts are present)
+        while BOOTLOADER_START in content:
+            content = strip_bootloader(content)
 
         if "</head>" not in content:
             logging.warning(
