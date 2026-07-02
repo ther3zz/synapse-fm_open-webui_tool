@@ -543,7 +543,6 @@ BOOTLOADER_SCRIPT = """
                 var reader = response.body.getReader();
                 var chunks = [];
                 var totalBytes = 0;
-                var firstSegment = true;
 
                 function pump() {
                     reader.read().then(function(result) {
@@ -556,14 +555,14 @@ BOOTLOADER_SCRIPT = """
                         chunks.push(result.value);
                         totalBytes += result.value.length;
 
-                        // First segment: 64KB (~4s) for fast startup
-                        // Subsequent: 512KB (~32s) for fewer handoffs
-                        var threshold = firstSegment ? 65536 : 524288;
-                        if (totalBytes >= threshold) {
+                        // 64KB segments (~4s at 128kbps). With real-time
+                        // paced delivery, uniform segments ensure each one
+                        // finishes downloading before the previous finishes
+                        // playing. Double-buffering handles gapless handoff.
+                        if (totalBytes >= 65536) {
                             enqueueBlobSegment(chunks);
                             chunks = [];
                             totalBytes = 0;
-                            firstSegment = false;
                         }
 
                         pump();
