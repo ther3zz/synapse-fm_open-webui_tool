@@ -1,0 +1,7 @@
+# Internal documentation
+docs/
+scratch/
+# Python
+__pycache__/
+*.pyc
+*.pyo
