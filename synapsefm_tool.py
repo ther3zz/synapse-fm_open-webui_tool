@@ -495,6 +495,7 @@ class Tools:
                 now_playing_url=now_playing_url,
                 synapsefm_url=client._base_url,
                 stations_json=json.dumps(switcher_stations),
+                station_image=html_station.get("image", ""),
             )
 
             html_response = HTMLResponse(

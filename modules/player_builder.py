@@ -27,6 +27,7 @@ def build_player_html(
     now_playing_url: str,
     synapsefm_url: str,
     stations_json: str = "[]",
+    station_image: str = "",
 ) -> str:
     """
     Build the complete HTML for the embedded audio player.
@@ -56,6 +57,7 @@ def build_player_html(
         "stationName": station_name,
         "stationGenre": station_genre,
         "nowPlayingUrl": now_playing_url,
+        "stationImage": station_image,
         "nonce": uuid.uuid4().hex[:16],
     }).replace('</','<\\/')
 

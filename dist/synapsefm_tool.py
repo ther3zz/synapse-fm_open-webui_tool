@@ -254,6 +254,7 @@ def build_player_html(
     now_playing_url: str,
     synapsefm_url: str,
     stations_json: str = "[]",
+    station_image: str = "",
 ) -> str:
     """
     Build the complete HTML for the embedded audio player.
@@ -283,6 +284,7 @@ def build_player_html(
         "stationName": station_name,
         "stationGenre": station_genre,
         "nowPlayingUrl": now_playing_url,
+        "stationImage": station_image,
         "nonce": uuid.uuid4().hex[:16],
     }).replace('</','<\\/')
 
@@ -1281,7 +1283,8 @@ BOOTLOADER_SCRIPT = """
                 '  user-select: none; white-space: nowrap;',
                 '}',
                 '#synapsefm-tab:hover { color: #e4e4e7; background: rgba(255,255,255,0.08); }',
-                '#synapsefm-player .sfm-icon { font-size: 16px; flex-shrink: 0; }',
+                '#synapsefm-player .sfm-icon { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 16px; }',
+                '#synapsefm-player .sfm-icon img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; }',
                 '#synapsefm-player .sfm-info { flex: 1; min-width: 0; overflow: hidden; }',
                 '#synapsefm-player .sfm-station {',
                 '  font-weight: 600; font-size: 12px; white-space: nowrap;',
@@ -1341,7 +1344,17 @@ BOOTLOADER_SCRIPT = """
 
             var icon = document.createElement('span');
             icon.className = 'sfm-icon';
-            icon.textContent = '\\uD83D\\uDCFB'; // 📻
+            icon.id = 'sfm-artwork';
+            // Show station artwork if available, otherwise emoji
+            if (currentConfig && currentConfig.stationImage) {
+                var img = document.createElement('img');
+                img.src = currentConfig.stationImage;
+                img.alt = '';
+                img.draggable = false;
+                icon.appendChild(img);
+            } else {
+                icon.textContent = '\\uD83D\\uDCFB'; // 📻
+            }
 
             var info = document.createElement('div');
             info.className = 'sfm-info';
@@ -1429,7 +1442,21 @@ BOOTLOADER_SCRIPT = """
 
         function updateStationInfo(name, genre) {
             var el = document.getElementById('sfm-station-name');
-            if (el) el.textContent = name + (genre ? ' \\u00B7 ' + genre : '');
+            if (el) el.textContent = (name || 'SynapseFM') + (genre ? ' -- ' + genre : '');
+        }
+
+        function updateArtwork(imageUrl) {
+            var el = document.getElementById('sfm-artwork');
+            if (!el) return;
+            if (imageUrl) {
+                // Replace contents with img
+                while (el.firstChild) el.removeChild(el.firstChild);
+                var img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = '';
+                img.draggable = false;
+                el.appendChild(img);
+            }
         }
 
         function updateTrackTitle(title) {
@@ -2247,6 +2274,7 @@ class Tools:
                 now_playing_url=now_playing_url,
                 synapsefm_url=client._base_url,
                 stations_json=json.dumps(switcher_stations),
+                station_image=html_station.get("image", ""),
             )
 
             html_response = HTMLResponse(
